@@ -1,0 +1,19 @@
+run_name: ablation_baseline_dice_no_aug_fold1
+train_subjects: ['train_2', 'train_3', 'train_4', 'train_5']
+epochs: 5
+patches_per_subject: 30
+patch_size: (64, 64, 32)
+batch_size: 1
+base_channels: 16
+learning_rate: 0.0001
+loss_mode: dice
+augment: False
+foreground_sampling: True
+device: cuda
+gpu: NVIDIA A40
+
+epoch 1/5, train_loss=0.656872
+epoch 2/5, train_loss=0.555467
+epoch 3/5, train_loss=0.524790
+epoch 4/5, train_loss=0.509614
+epoch 5/5, train_loss=0.489975

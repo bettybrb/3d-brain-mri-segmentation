@@ -1,0 +1,54 @@
+run_name: final_model_all_5_training_subjects_40epochs
+train_subjects: ['train_1', 'train_2', 'train_3', 'train_4', 'train_5']
+epochs: 40
+patches_per_subject: 40
+patch_size: (64, 64, 32)
+batch_size: 1
+base_channels: 16
+learning_rate: 0.0001
+loss_mode: dice_ce
+augment: True
+foreground_sampling: True
+device: cuda
+gpu: NVIDIA A40
+
+epoch 1/40, train_loss=1.582780
+epoch 2/40, train_loss=1.324731
+epoch 3/40, train_loss=1.211702
+epoch 4/40, train_loss=1.109106
+epoch 5/40, train_loss=1.027552
+epoch 6/40, train_loss=0.958361
+epoch 7/40, train_loss=0.894852
+epoch 8/40, train_loss=0.878093
+epoch 9/40, train_loss=0.835567
+epoch 10/40, train_loss=0.761846
+epoch 11/40, train_loss=0.768595
+epoch 12/40, train_loss=0.732018
+epoch 13/40, train_loss=0.717704
+epoch 14/40, train_loss=0.672081
+epoch 15/40, train_loss=0.660824
+epoch 16/40, train_loss=0.672027
+epoch 17/40, train_loss=0.613169
+epoch 18/40, train_loss=0.611043
+epoch 19/40, train_loss=0.584172
+epoch 20/40, train_loss=0.587315
+epoch 21/40, train_loss=0.595639
+epoch 22/40, train_loss=0.577302
+epoch 23/40, train_loss=0.554352
+epoch 24/40, train_loss=0.537537
+epoch 25/40, train_loss=0.533837
+epoch 26/40, train_loss=0.523620
+epoch 27/40, train_loss=0.527141
+epoch 28/40, train_loss=0.516323
+epoch 29/40, train_loss=0.508392
+epoch 30/40, train_loss=0.507042
+epoch 31/40, train_loss=0.495300
+epoch 32/40, train_loss=0.482752
+epoch 33/40, train_loss=0.483131
+epoch 34/40, train_loss=0.471856
+epoch 35/40, train_loss=0.508871
+epoch 36/40, train_loss=0.489752
+epoch 37/40, train_loss=0.510949
+epoch 38/40, train_loss=0.483786
+epoch 39/40, train_loss=0.460297
+epoch 40/40, train_loss=0.453517

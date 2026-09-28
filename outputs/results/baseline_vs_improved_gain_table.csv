@@ -1,0 +1,5 @@
+metric,baseline,improved,absolute_change
+CSF Dice,0.5229,0.5951,0.0722
+Gray matter Dice,0.2495,0.418,0.1685
+White matter Dice,0.1928,0.7473,0.5545
+Mean foreground Dice,0.3217,0.5868,0.2651

@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.DS_Store
+.ipynb_checkpoints/
+.venv/
+venv/
+data/
+MRBrainS13/
+*.nii
+*.nii.gz
+*.pth
+*.pt

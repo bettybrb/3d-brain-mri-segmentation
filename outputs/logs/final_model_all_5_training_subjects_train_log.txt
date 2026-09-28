@@ -1,0 +1,34 @@
+run_name: final_model_all_5_training_subjects
+train_subjects: ['train_1', 'train_2', 'train_3', 'train_4', 'train_5']
+epochs: 20
+patches_per_subject: 40
+patch_size: (64, 64, 32)
+batch_size: 1
+base_channels: 16
+learning_rate: 0.0001
+loss_mode: dice_ce
+augment: True
+foreground_sampling: True
+device: cuda
+gpu: NVIDIA A40
+
+epoch 1/20, train_loss=1.744830
+epoch 2/20, train_loss=1.482023
+epoch 3/20, train_loss=1.312089
+epoch 4/20, train_loss=1.218086
+epoch 5/20, train_loss=1.142275
+epoch 6/20, train_loss=1.039239
+epoch 7/20, train_loss=0.984049
+epoch 8/20, train_loss=0.979479
+epoch 9/20, train_loss=0.885845
+epoch 10/20, train_loss=0.862961
+epoch 11/20, train_loss=0.801192
+epoch 12/20, train_loss=0.771075
+epoch 13/20, train_loss=0.742329
+epoch 14/20, train_loss=0.712960
+epoch 15/20, train_loss=0.690782
+epoch 16/20, train_loss=0.671810
+epoch 17/20, train_loss=0.671407
+epoch 18/20, train_loss=0.674163
+epoch 19/20, train_loss=0.620322
+epoch 20/20, train_loss=0.608536

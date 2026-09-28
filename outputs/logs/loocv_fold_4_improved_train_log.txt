@@ -1,0 +1,34 @@
+run_name: loocv_fold_4_improved
+train_subjects: ['train_1', 'train_2', 'train_3', 'train_5']
+epochs: 20
+patches_per_subject: 40
+patch_size: (64, 64, 32)
+batch_size: 1
+base_channels: 16
+learning_rate: 0.0001
+loss_mode: dice_ce
+augment: True
+foreground_sampling: True
+device: cuda
+gpu: NVIDIA A40
+
+epoch 1/20, train_loss=1.662235
+epoch 2/20, train_loss=1.436095
+epoch 3/20, train_loss=1.293958
+epoch 4/20, train_loss=1.221143
+epoch 5/20, train_loss=1.151609
+epoch 6/20, train_loss=1.083335
+epoch 7/20, train_loss=1.041260
+epoch 8/20, train_loss=0.984140
+epoch 9/20, train_loss=0.944821
+epoch 10/20, train_loss=0.915459
+epoch 11/20, train_loss=0.854660
+epoch 12/20, train_loss=0.798552
+epoch 13/20, train_loss=0.757861
+epoch 14/20, train_loss=0.759176
+epoch 15/20, train_loss=0.744782
+epoch 16/20, train_loss=0.697852
+epoch 17/20, train_loss=0.714713
+epoch 18/20, train_loss=0.662600
+epoch 19/20, train_loss=0.688776
+epoch 20/20, train_loss=0.651295

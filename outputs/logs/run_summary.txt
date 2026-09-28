@@ -1,0 +1,68 @@
+{
+  "dataset": "MRBrainS13",
+  "training_subjects": [
+    "train_1",
+    "train_2",
+    "train_3",
+    "train_4",
+    "train_5"
+  ],
+  "test_subjects": [
+    "test_1",
+    "test_2",
+    "test_3",
+    "test_4",
+    "test_5",
+    "test_6",
+    "test_7",
+    "test_8",
+    "test_9",
+    "test_10",
+    "test_11",
+    "test_12",
+    "test_13",
+    "test_14",
+    "test_15"
+  ],
+  "input_modalities": [
+    "T1.nii",
+    "T1_IR.nii",
+    "T2_FLAIR.nii"
+  ],
+  "target_label": "LabelsForTesting.nii",
+  "classes": {
+    "0": "background",
+    "1": "CSF including ventricles",
+    "2": "gray matter including basal ganglia",
+    "3": "white matter including lesions"
+  },
+  "model": "3D U-Net",
+  "patch_size": [
+    64,
+    64,
+    32
+  ],
+  "batch_size": 1,
+  "base_channels": 16,
+  "learning_rate": 0.0001,
+  "loocv_epochs": 20,
+  "final_epochs": 20,
+  "patches_per_subject": 40,
+  "loss_main": "Dice + Cross Entropy",
+  "augmentation": true,
+  "foreground_sampling": true,
+  "loocv_mean_scores": {
+    "dice_background": 0.9587278846021142,
+    "dice_csf": 0.7209629674765663,
+    "dice_gray_matter": 0.7151031722599184,
+    "dice_white_matter": 0.7338107666518623,
+    "mean_foreground_dice": 0.7232923021294491
+  },
+  "test_mean_scores": {
+    "dice_background": 0.9761749120358083,
+    "dice_csf": 0.7713359158635823,
+    "dice_gray_matter": 0.7705653424983191,
+    "dice_white_matter": 0.7952405240776123,
+    "mean_foreground_dice": 0.7790472608131711
+  }
+}
