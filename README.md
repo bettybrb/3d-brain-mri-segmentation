@@ -1,157 +1,148 @@
 # 3D Brain MRI Segmentation
 
-A deep learning pipeline for multi-modal 3D brain tissue segmentation using a compact 3D U-Net, developed and evaluated on the MRBrainS13 dataset.
+### Multi-modal volumetric tissue segmentation with a memory-efficient 3D U-Net
 
-The system segments volumetric MRI scans into cerebrospinal fluid (CSF), gray matter and white matter using three complementary MRI modalities, patch-based training and full-volume sliding-window inference.
+An end-to-end PyTorch pipeline for segmenting **CSF, gray matter and white matter** from multi-modal 3D brain MRI using the MRBrainS13 dataset.
 
-## Overview
+The project combines three MRI modalities, foreground-biased patch sampling, volumetric augmentation and sliding-window inference to train a compact 3D U-Net under limited labelled data.
 
-Medical image segmentation presents additional challenges compared with conventional 2D image classification: MRI scans are volumetric, GPU memory requirements are high, labelled subjects are limited and tissue classes are heavily imbalanced.
+## Results
 
-This project addresses these constraints with a memory-efficient 3D segmentation pipeline designed around a compact 3D U-Net.
-
-## Input Data
-
-The model uses three aligned MRI modalities as input channels:
-
-- T1
-- T1-IR
-- T2-FLAIR
-
-The segmentation target contains four coarse classes:
-
-- background
-- cerebrospinal fluid (CSF)
-- gray matter
-- white matter
-
-Each modality is independently z-score normalised over non-zero voxels before the three volumes are stacked into a multi-channel input.
-
-## 3D U-Net
-
-A compact 3D U-Net processes volumetric MRI patches using 3D convolutions.
-
-The network uses a base channel size of 16, allowing the model to retain 3D spatial context while remaining computationally practical for volumetric training.
-
-## Patch-Based Training
-
-Training operates on 64 x 64 x 32 voxel patches rather than complete MRI volumes.
-
-Foreground-biased sampling increases the probability that training patches contain CSF, gray matter or white matter instead of being dominated by background voxels.
-
-This reduces GPU memory requirements while exposing the network to more useful foreground examples.
-
-## Loss Function
-
-The final model combines Dice loss with Cross Entropy:
-
-`Loss = Dice Loss + Cross Entropy Loss`
-
-Dice provides overlap-based supervision while Cross Entropy provides voxel-level class supervision.
-
-## Data Augmentation
-
-The training pipeline applies volumetric augmentation including:
-
-- random flips
-- Gaussian noise
-- intensity scaling
-- intensity shifting
-
-These augmentations increase training variation in a setting with only five labelled training subjects.
-
-## Sliding-Window Inference
-
-Although the model is trained on patches, evaluation is performed on complete MRI volumes.
-
-Sliding-window inference moves the trained network across the full 3D scan and combines overlapping predictions to reconstruct the complete segmentation volume.
-
-## Leave-One-Out Cross-Validation
-
-Because only five labelled training subjects were available, the main evaluation uses five-fold leave-one-subject-out cross-validation.
-
-For each fold, four subjects are used for training and the remaining subject is held out for validation.
-
-### LOOCV Results
-
-| Tissue | Mean Dice |
+| Evaluation | Mean foreground Dice |
 | --- | ---: |
-| CSF | 0.721 |
-| Gray matter | 0.715 |
-| White matter | 0.734 |
-| **Mean foreground** | **0.723 ± 0.045** |
+| 5-fold leave-one-subject-out cross-validation | **0.723 ± 0.045** |
+| Final model, 20 epochs | **0.779** |
+| Final model, 40 epochs | **0.794** |
 
-The variation between folds highlights the difficulty of generalising across subjects when very little labelled 3D medical data is available.
+The final 40-epoch model was trained using all five labelled training subjects and evaluated on **15 additional subjects**, reaching:
 
-## Ablation Experiment
+| Tissue | Dice |
+| --- | ---: |
+| CSF | **0.797** |
+| Gray matter | **0.779** |
+| White matter | **0.806** |
+| Mean foreground | **0.794** |
 
-A fold-1 comparison evaluated a simpler Dice-only, no-augmentation setup against the improved Dice + Cross Entropy and augmentation pipeline.
+![MRI modalities and segmentation label](outputs/figures/dataset_example_modalities_and_label.png)
 
-Mean foreground Dice increased from **0.322 to 0.587** in this comparison.
+## Problem
 
-Because loss and augmentation were changed together, this result should be interpreted as evidence for the combined training setup rather than attributing the improvement to either component individually.
+3D medical image segmentation is challenging because MRI volumes are large, labelled subjects are limited and foreground tissue classes occupy much less space than background.
 
-## Final Generalisation Evaluation
+The pipeline was therefore designed around three constraints:
 
-After cross-validation, a final model was trained using all five labelled training subjects and evaluated on fifteen additional subjects with available coarse labels.
+- preserve 3D spatial context;
+- keep training memory requirements manageable;
+- evaluate generalisation across subjects rather than relying on training performance.
 
-| Training | CSF | Gray Matter | White Matter | Mean Foreground |
-| --- | ---: | ---: | ---: | ---: |
-| 20 epochs | 0.771 | 0.771 | 0.795 | 0.779 |
-| 40 epochs | **0.797** | **0.779** | **0.806** | **0.794** |
+## Input data
 
-The 40-epoch model therefore achieved a mean foreground Dice of **0.794**.
+Each subject is represented by three aligned MRI modalities:
 
-## Qualitative Analysis
+- **T1**;
+- **T1-IR**;
+- **T2-FLAIR**.
 
-The project also evaluates segmentation quality visually using MRI slices, ground-truth masks, predicted masks and error maps.
+The three volumes are independently z-score normalised over non-zero voxels and stacked as input channels.
 
-The main failure mode is local confusion around tissue boundaries and smaller internal structures rather than failure to locate the brain or recover its overall tissue layout.
+The target segmentation contains four classes:
 
-## Repository Structure
+- background;
+- cerebrospinal fluid, including ventricles;
+- gray matter, including basal ganglia;
+- white matter, including lesions.
 
-- `brain_mri_segmentation.ipynb` - complete preprocessing, training, LOOCV, inference and evaluation pipeline
-- `outputs/figures/` - segmentation examples and evaluation plots
-- `outputs/results/` - LOOCV, ablation and generalisation results
-- `outputs/logs/` - training logs
-- `requirements.txt` - Python dependencies
+## Model and training pipeline
 
-## Technologies
+The model is a compact **3D U-Net** with a base channel width of 16.
 
-- Python
-- PyTorch
-- NumPy
-- pandas
-- NiBabel
-- Matplotlib
-- 3D U-Net
-- NIfTI medical imaging
+Training uses **64 × 64 × 32** voxel patches rather than complete MRI volumes. Foreground-biased sampling increases the probability that patches contain tissue classes rather than mostly background.
+
+The final training setup combines:
+
+- Dice loss + Cross Entropy;
+- foreground-biased patch sampling;
+- random 3D flips;
+- Gaussian noise;
+- intensity scaling;
+- intensity shifting.
+
+Full MRI volumes are reconstructed during evaluation using overlapping **sliding-window inference**.
+
+## Cross-validation
+
+Only five labelled training subjects were available, so the main model-selection experiment used leave-one-subject-out cross-validation.
+
+For each fold, four subjects were used for training and one was held out.
+
+| Fold | Held-out subject | Mean foreground Dice |
+| --- | --- | ---: |
+| 1 | train_1 | 0.674 |
+| 2 | train_2 | 0.709 |
+| 3 | train_3 | 0.757 |
+| 4 | train_4 | **0.782** |
+| 5 | train_5 | 0.695 |
+
+![LOOCV performance](outputs/figures/loocv_mean_foreground_dice_per_fold.png)
+
+The cross-validation mean was **0.723**, with a sample standard deviation of **0.045**, showing noticeable subject-to-subject variation.
+
+## Training ablation
+
+A fold-1 comparison tested a simpler Dice-only, no-augmentation configuration against the final Dice + Cross Entropy and augmentation setup.
+
+| Setup | Mean foreground Dice |
+| --- | ---: |
+| Dice only, no augmentation | **0.322** |
+| Dice + Cross Entropy + augmentation | **0.587** |
+
+The absolute improvement was **+0.265 Dice**.
+
+Because loss and augmentation changed together, this comparison demonstrates the benefit of the **combined training setup** rather than isolating the contribution of either change individually.
+
+## Final generalisation experiment
+
+After cross-validation, the model was retrained using all five labelled training subjects and evaluated on fifteen additional subjects with available coarse labels.
+
+Increasing training from 20 to 40 epochs improved mean foreground Dice from **0.779 to 0.794**.
+
+![Generalisation performance across subjects](outputs/figures/test_mean_foreground_dice_per_subject.png)
+
+## Qualitative evaluation
+
+Segmentation predictions were also inspected visually using MRI slices, ground-truth labels, model predictions and error maps.
+
+The main errors occur around tissue boundaries and smaller internal structures rather than complete failure to localise the brain.
+
+![Example segmentation prediction](outputs/figures/loocv_fold_4_train_4_prediction.png)
+
+## Repository structure
+
+```text
+3d-brain-mri-segmentation/
+├── brain_mri_segmentation.ipynb
+├── outputs/
+│   ├── figures/
+│   ├── results/
+│   └── logs/
+├── requirements.txt
+└── README.md
+```
+
+The notebook contains the complete preprocessing, patch sampling, model training, cross-validation, sliding-window inference and evaluation pipeline.
+
+Compact result tables and representative figures are retained under `outputs/` so the reported metrics can be inspected without rerunning model training.
 
 ## Installation
 
 ```bash
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-The MRBrainS13 dataset is not included in this repository and must be obtained separately.
+The MRBrainS13 MRI volumes are not distributed in this repository and must be obtained separately.
 
-## Concepts Demonstrated
+## Tech
 
-- 3D convolutional neural networks
-- Medical image segmentation
-- Multi-modal MRI processing
-- 3D U-Net architectures
-- NIfTI image processing
-- Patch-based training
-- Sliding-window inference
-- Dice loss
-- Cross Entropy loss
-- Class imbalance handling
-- Data augmentation
-- Leave-one-out cross-validation
-- Ablation experiments
-- Quantitative and qualitative model evaluation
-
-## Motivation
-
-Training segmentation networks on 3D medical data requires balancing model capacity, limited labelled data and substantial memory requirements. This project demonstrates an end-to-end approach that combines multi-modal MRI information with memory-efficient patch training and full-volume inference, while evaluating generalisation across individual subjects rather than relying only on training performance.
+**Python · PyTorch · 3D U-Net · NumPy · pandas · NiBabel · NIfTI · volumetric segmentation · medical imaging · sliding-window inference**
